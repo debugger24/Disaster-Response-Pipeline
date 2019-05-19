@@ -60,33 +60,31 @@ def build_model():
     ])
     
     parameters = {
-        'classifier__estimator__kernel': ['linear'],
-        'classifier__estimator__degree':[2],
+        'classifier__estimator__degree':[1, 2],
     }
     
     cv = GridSearchCV(pipeline, 
                       param_grid=parameters, 
                       verbose=3)
-    
     return cv
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
-    y_pred = pipeline.predict(X_test)
+    Y_pred = model.predict(X_test)
     accuracy_list = []
     precision_list = []
     recall_list = []
     f1_list = []
-    for i in range(len(col_names)):
-        accuracy = accuracy_score(y_pred[:,i], y_test[col_names[i]].values)
-        precision = precision_score(y_pred[:,i], y_test[col_names[i]].values)
-        recall = recall_score(y_pred[:,i], y_test[col_names[i]].values)
-        f1 = f1_score(y_pred[:,i], y_test[col_names[i]].values)
+    for i in range(len(category_names)):
+        accuracy = accuracy_score(Y_pred[:,i], Y_test[category_names[i]].values)
+        precision = precision_score(Y_pred[:,i], Y_test[category_names[i]].values)
+        recall = recall_score(Y_pred[:,i], Y_test[category_names[i]].values)
+        f1 = f1_score(Y_pred[:,i], Y_test[category_names[i]].values)
         accuracy_list.append(accuracy)
         precision_list.append(precision)
         recall_list.append(recall)
         f1_list.append(f1)
-    df = pd.DataFrame({'label': col_names,
+    df = pd.DataFrame({'label': category_names,
                        'accuracy': accuracy_list,
                        'precision': precision_list,
                        'recall': recall_list,
@@ -95,7 +93,7 @@ def evaluate_model(model, X_test, Y_test, category_names):
 
 
 def save_model(model, model_filepath):
-    pickle.dump(model, open('model_filepath', 'wb'))
+    pickle.dump(model, open(model_filepath, 'wb'))
 
 
 def main():
