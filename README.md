@@ -12,3 +12,9 @@
     `python app/run.py`
 
 3. Go to http://0.0.0.0:3001/
+
+### Screenshorts
+<img src="images/home.png">
+<img src="images/stat_1.png">
+<img src="images/stat_2.png">
+<img src="images/stat_3.png">
