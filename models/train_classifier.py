@@ -29,7 +29,9 @@ import warnings
 
 
 def load_data(database_filepath):
-    # load data from database
+    '''
+        Load data from database
+    '''
     engine = sqlalchemy.create_engine('sqlite:///' + database_filepath)
     df = pd.read_sql_table('messages', engine)
     X = df['message']
@@ -40,6 +42,9 @@ def load_data(database_filepath):
 stop_words = stopwords.words("english")
 
 def tokenize(text):
+    '''
+        Tokenize sentense
+    '''
     # Convert to lower case 
     text = re.sub(r"[^a-zA-Z0-9]", " ", text.lower())
     
@@ -53,6 +58,9 @@ def tokenize(text):
 
 
 def build_model():
+    '''
+        Builds model using pipeline
+    '''
     pipeline = Pipeline([
         ('count', CountVectorizer(tokenizer = tokenize)),
         ('tfidf', TfidfTransformer()),
@@ -70,6 +78,9 @@ def build_model():
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
+    '''
+        To evaluate model and print accuracy, precision, recall and f1 score for each category
+    '''
     Y_pred = model.predict(X_test)
     accuracy_list = []
     precision_list = []
@@ -93,10 +104,16 @@ def evaluate_model(model, X_test, Y_test, category_names):
 
 
 def save_model(model, model_filepath):
+    '''
+        Save model to disk
+    '''
     pickle.dump(model, open(model_filepath, 'wb'))
 
 
 def main():
+    '''
+        Main function to load, build model, train, evaluate and save model
+    '''
     if len(sys.argv) == 3:
         database_filepath, model_filepath = sys.argv[1:]
         print('Loading data...\n    DATABASE: {}'.format(database_filepath))
