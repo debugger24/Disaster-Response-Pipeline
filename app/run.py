@@ -10,6 +10,8 @@ nltk.download('wordnet')
 from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
 
+from nltk.corpus import stopwords
+
 from flask import Flask
 from flask import render_template, request, jsonify
 from plotly.graph_objs import Bar
@@ -47,6 +49,13 @@ def index():
     # TODO: Below is an example - modify to extract data for your own visuals
     genre_counts = df.groupby('genre').count()['message']
     genre_names = list(genre_counts.index)
+
+    category_counts = df.drop(['id','message','original','genre'], axis=1).sum()
+    category_names = list(category_counts.index)
+
+    word_series = pd.Series(' '.join(df['message']).lower().split())
+    top_words = word_series[~word_series.isin(stopwords.words("english"))].value_counts()[:8]
+    top_words_names = list(top_words.index)
     
     # create visuals
     # TODO: Below is an example - modify to create your own visuals
@@ -66,6 +75,42 @@ def index():
                 },
                 'xaxis': {
                     'title': "Genre"
+                }
+            }
+        },
+        {
+            'data': [
+                Bar(
+                    x=top_words_names,
+                    y=top_words
+                )
+            ],
+
+            'layout': {
+                'title': 'Most Frequent Words',
+                'yaxis': {
+                    'title': "Count"
+                },
+                'xaxis': {
+                    'title': "Words"
+                }
+            }
+        },
+        {
+            'data': [
+                    Bar(
+                        x=category_names,
+                        y=category_counts
+                    )
+                ],
+
+            'layout': {
+                'title': 'Distribution of Categories',
+                'yaxis': {
+                    'title': "Count"
+                },
+                'xaxis': {
+                    'title': "Category"
                 }
             }
         }
